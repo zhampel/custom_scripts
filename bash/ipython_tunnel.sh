@@ -4,7 +4,7 @@
 function ipytunnel {
   # Input machine name
   machine=$1
-  if [ ${machine} ];
+  if [ "${machine}" ];
   then
     ssh -N -f -L localhost:8888:localhost:8889 ${machine}
   else
@@ -18,9 +18,9 @@ function ipyfind {
   id=`ps aux | grep 'ssh' | awk '/localhost/{print$2}'`
   # Process full info
   info=`ps aux | grep 'ssh' | awk '/localhost/{print}'`
-
+  
   # Only if id found, return
-  if [ ${id} ];
+  if [ "${id}" ];
   then
     echo -e "Process id: \t\t\c"
     echo ${id}
@@ -35,7 +35,7 @@ function ipykill {
   # Process id
   process_id=`ps aux | grep 'ssh' | awk '/localhost/{print$2}'`
   # Only if id found, then ask to kill
-  if [ ${process_id} ];
+  if [ "${process_id}" ];
   then
     echo -e "Kill process ${process_id}? [Y,n] \c"
     read DO_IT
