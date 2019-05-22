@@ -1,6 +1,6 @@
 #!/bin/bash
 
-global_mounting_dir="${HOME}/MMachines"
+global_mounting_dir="${HOME}/MNTMachines"
 
 # Lookup hostname IP of named machine
 function hname_lookup {
@@ -58,7 +58,8 @@ function unmntme {
   if [ ! -d ${m_dir} ]; then
     echo "Mounted directory does not exist. Exiting..."
   else
-    sudo umount -f ${m_dir}
+    sudo diskutil unmount force ${m_dir}
+    #sudo umount -f ${m_dir}
     echo "Successfully unmounted."
   fi
 }
