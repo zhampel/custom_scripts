@@ -1,83 +1,87 @@
 #!/bin/bash
 
+# Initialize full path in .bashrc or similar
 global_mounting_dir="$1"
-#global_mounting_dir="${HOME}/MNTMachines"
 
-# Lookup hostname IP of named machine
-function hname_lookup {
-  local hostname=`ssh -G ${1} | awk '/^hostname / { print $2 }'`
-  echo ${hostname}
+
+# General ssh/config lookup function
+# Keywords such as hostname, user, identityfile 
+function sshconfig_lookup {
+  # Usage: sshconfig_lookup machine_name ssh_config_keyword
+  keyword=${2}
+  local keyval=`ssh -G ${1} | awk '/^'${keyword}' / { print $2 }'`
+  echo ${keyval}
 }
 
-# Lookup username of named machine
-function username_lookup {
-  local username=`ssh -G ${1} | awk '/^user / { print $2 }'`
-  echo ${username}
-}
-
-# Lookup username of named machine
-function idfile_lookup {
-  local idfile=`ssh -G ${1} | awk '/^identityfile / { print $2 }'`
-  echo ${idfile}
-}
 
 # Mount requested machine
 function mymnt {
+  # Input is machine name (from .ssh/config)
   machine=${1}
-  echo "Mounting ${machine} machine..."
 
-  # Mounting directory
+  # Full path of mounting directory
   m_dir=${global_mounting_dir}/${machine}
 
   # If mounting directory dne, make it
   [ ! -d ${m_dir} ] && mkdir ${m_dir}
 
+  # Check if already mounted.
+  is_mnt=`mount | grep "on ${m_dir}"`
+  # If not then mount, otherwise return from function.
+  { [ -z "${is_mnt}" ] && echo "Mounting ${machine} to directory ${m_dir}"; } || \
+  { echo "Machine ${machine} already mounted to ${m_dir}. Exiting..." && return 0; }
+
   # Get hostname address of machine
-  hname=$(hname_lookup ${machine})
+  hoststring="hostname"
+  hname=$(sshconfig_lookup ${machine} ${hoststring})
+  ping -c 1 ${hname} &> /dev/null || \
+  { echo "Machine ${machine} with hostname ${hname} not reachable as defined. Exiting..." && return 0; }
   echo "  with HOSTNAME:  ${hname}"
 
-  # Get hostname address of machine
-  usrname=$(username_lookup ${machine})
+  # Get username associated with machine, defaults to local user
+  userstring="user"
+  usrname=$(sshconfig_lookup ${machine} ${userstring})
+  [ -z ${usrname} ] && usrname=`whoami`
   echo "  with USERNAME:  ${usrname}"
 
-  # RSA identify file
-  rsa_file=$(idfile_lookup ${machine})
-  # Check that only one IdentityFile is listed, no default.
-  #[ ${#rsa_file} -eq 1 ] || { echo "IdentityFile may not be properly defined in .ssh/config."; return 0; }
+  # Get RSA identify file
+  identitystring="identityfile"
+  rsa_file=$(sshconfig_lookup ${machine} ${identitystring})
+
+  # Check that only one IdentityFile is listed.
+  # If not, suggest defaults before exiting.
+  arr=($rsa_file)
+  [ ${#arr[@]} -eq 1 ] || \
+  { echo "IdentityFile for ${machine} machine not specified in ~/.ssh/config."; \
+  echo "    Please specify or consider from amongst default options:"; \
+  echo "    ${rsa_file}"; return 0; }
+
+  # Test that specified RSA file exists
+  [ -f ${rsa_file} ] || { echo "IdentifyFile ${rsa_file} does not exist. Exiting..."; return 0; }
   echo "  with IDENTITYFILE:  ${rsa_file}"
 
-  #echo "sudo sshfs -o allow_other,defer_permissions,IdentityFile=${rsa_file} ${usrname}@${hname}: ${m_dir}"
-  #echo "sshfs -o allow_other,defer_permissions,IdentityFile=${rsa_file} ${usrname}@${1}: ${m_dir}"
-  # SSHFS command to mount
-  if [ -f ${rsa_file} ]; then
-    eval `sshfs -o allow_other,defer_permissions,IdentityFile=${rsa_file} ${usrname}@${machine}: ${m_dir}`
-    #sshfs -o allow_other,defer_permissions,IdentityFile=${rsa_file} ${usrname}@${1}: ${m_dir}
-    #sshfs -o allow_other,defer_permissions,IdentityFile=${rsa_file} ${usrname}@${hname}: ${m_dir}
-    #sudo sshfs -o allow_other,defer_permissions,IdentityFile=${rsa_file} ${usrname}@${hname}: ${m_dir}
-    echo "Successfully mounted to ${m_dir}"
-  else
-    #sshfs -o allow_other,defer_permissions ${usrname}@${hname}: ${m_dir}
-    #sudo sshfs -o allow_other,defer_permissions ${usrname}@${hname}: ${m_dir}
-    echo "Successfully mounted to ${m_dir}"
-  fi
+  eval `sshfs -o allow_other,defer_permissions,IdentityFile=${rsa_file} ${usrname}@${machine}: ${m_dir}` && \
+  echo "Successfully mounted ${machine} to ${m_dir}" || \
+  echo "Unsuccessful mount of ${machine} to ${m_dir}"
 }
+
 
 # Unmount requested machine
 function unmntme {
+  # Input is machine name (from .ssh/config)
   machine=${1}
-  echo "Unmounting ${machine} machine..."
 
-  # Mounting directory
+  # Full path of mounting directory
   m_dir=${global_mounting_dir}/${machine}
-  
-  # If mounting directory dne, exit
-  [ ! -d ${m_dir} ] && echo "Mounted directory does not exist. Exiting..." || \
-  sudo diskutil unmount force ${m_dir} && echo "Successfully unmounted."
-  #if [ ! -d ${m_dir} ]; then 
-  #  echo "Mounted directory does not exist. Exiting..."
-  #else
-  #  sudo diskutil unmount force ${m_dir}
-  #  #sudo umount -f ${m_dir}
-  #  echo "Successfully unmounted."
-  #fi
+ 
+  # Check if mounting directory even exists.
+  [ ! -d ${m_dir} ] && echo "Mounting directory does not exist. Exiting..." && return 0
+
+  # Check if already mounted.
+  is_mnt=`mount | grep "on ${m_dir}"`
+
+  # If mounted, unmount, otherwise return from function.
+  [ ! -z "${is_mnt}" ] && \
+  sudo diskutil unmount force ${m_dir} && echo "Successfully unmounted." || \
+  echo "Machine ${machine} not mounted. Exiting..."
 }
