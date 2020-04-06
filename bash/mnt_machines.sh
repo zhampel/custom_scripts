@@ -16,7 +16,7 @@ function sshconfig_lookup {
 
 # Mount requested machine
 function mymnt {
-  # Input is machine name (from .ssh/config)
+  # Input is machine name alias (from .ssh/config)
   machine=${1}
 
   # Full path of mounting directory
@@ -68,7 +68,7 @@ function mymnt {
 
 # Unmount requested machine
 function unmntme {
-  # Input is machine name (from .ssh/config)
+  # Input is machine name alias (from .ssh/config)
   machine=${1}
 
   # Full path of mounting directory
