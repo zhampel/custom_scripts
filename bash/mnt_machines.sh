@@ -8,9 +8,13 @@ global_mounting_dir="$1"
 # Keywords such as hostname, user, identityfile 
 function sshconfig_lookup {
   # Usage: sshconfig_lookup machine_name ssh_config_keyword
-  keyword=${2}
-  local keyval=`ssh -G ${1} | awk '/^'${keyword}' / { print $2 }'`
+  [ "${1}" ] && [ "${2}" ] && \
+  keyword=${2} && \
+  local keyval=`ssh -G ${1} | awk '/^'${keyword}' / { print $2 }'` && \
   echo ${keyval}
+  #{ [ ! -z "${keyval}" ] && echo ${keyval} || echo "No value for keyword ${keyword}"; } || \
+  #{ echo "Please provide valid input. Usage:" && \
+  #echo "  sshconfig_lookup machine_name ssh_config_keyword"; }
 }
 
 
@@ -60,7 +64,8 @@ function mymnt {
   [ -f ${rsa_file} ] || { echo "IdentifyFile ${rsa_file} does not exist. Exiting..."; return 0; }
   echo -e "\twith IDENTITYFILE:  ${rsa_file}"
 
-  eval `sshfs -o allow_other,defer_permissions,IdentityFile=${rsa_file} ${usrname}@${machine}: ${m_dir}` && \
+  eval `sshfs -o allow_other,defer_permissions,IdentityFile=${rsa_file},volname=${machine} ${usrname}@${machine}: ${m_dir}` && \
+  #eval `sshfs -o allow_other,defer_permissions,IdentityFile=${rsa_file} ${usrname}@${machine}: ${m_dir}` && \
   echo "Successfully mounted ${machine} to ${m_dir}" || \
   echo "Unsuccessful mount of ${machine} to ${m_dir}"
 }
