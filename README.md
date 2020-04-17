@@ -4,8 +4,11 @@ There are various functionalities included here, and can be accessed
 in the appropriate sections:
 
 [Setup](#initial-setup)
+
 [Requirements](#requirements)
+
 [Tunneling & Mounting](#tunneling-and-mounting)
+
 [VIM](#vim)
 
 
@@ -44,7 +47,7 @@ chsh -s /usr/local/bin/bash
 
 ## Tunneling & Mounting
 
-### Requirements
+### Setup
 
 #### Lines in .bashrc
 To setup the SSH and mounting functions, the following lines must be included
@@ -91,16 +94,13 @@ Finally, the `User` parameter is the username that you'll use on the remote mach
 
 #### Mounting a Machine
 To mount a remote machine and thus have access to its files on your local desktop,
-mount it like so, using `ex-machina` as the example remote computer above:
-
-`mymnt ex-machina`
+mount it like so, using `ex-machina` as the example remote computer above: `mymnt ex-machina`
 
 It will request user `ava`'s password for the SSH key file.
 Simple as that.
 You should now find a directory `/Users/${USER}/ex-machina` that points to the home folder on that machine!
 
-To unmount:
-`unmntme ex-machina`
+To unmount: `unmntme ex-machina`
 
 
 #### Tunneling to a Machine
@@ -118,13 +118,19 @@ where `YYYY` wil be numbers definined the process ID.
 In summary:
 
 On remote machine `ex-machina`
+
 1. `jupyter notebook --no-browser --port=8889`
 
 On local machine
+
 2. `ipytunnel ex-machina`
+
 3. Open `localhost:XXXX` in browser.
+
 4. Work
+
 5. `ipyfind ex-machina`
+
 6. `ipykill`
 
 
@@ -133,10 +139,10 @@ On local machine
 I almost exclusively use VIM as my text editor for 
 [reasons](https://www.tecmint.com/reasons-to-learn-vi-vim-editor-in-linux/).
 
-### .vimrc
+### Run Control File: vimrc
 There are a number of nice default that I've found or stolen over the years,
 which are included in my `.vimrc` file so that they are default.
-To use them yourself, simply copy the file into your home directory:
+To use them yourself, softlinks would be fine or simply copy the file into your home directory:
 
 `cp ~/.custom_scripts/vim/vimrc ~/.vimrc`
 
