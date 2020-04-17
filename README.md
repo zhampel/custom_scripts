@@ -3,12 +3,9 @@ Useful custom scripts I use in my setups.
 There are various functionalities included here, and can be accessed
 in the appropriate sections:
 
-[Setup](#initial-setup)
-
-[Requirements](#requirements)
-
-[Tunneling & Mounting](#tunneling-and-mounting)
-
+[Setup](#initial-setup)  
+[Requirements](#requirements)  
+[Tunneling & Mounting](#tunneling-and-mounting)  
 [VIM](#vim)
 
 
@@ -102,6 +99,11 @@ You should now find a directory `/Users/${USER}/ex-machina` that points to the h
 
 To unmount: `unmntme ex-machina`
 
+In summary:  
+1. To mount: `mymnt ex-machina`  
+2. Access files in `MNTMachines/ex-machina` directory  
+3. To unmount: `unmtme ex-machina`
+
 
 #### Tunneling to a Machine
 If you have a remote machine running a jupyter notebook that you want to access locally,
@@ -117,21 +119,15 @@ where `YYYY` wil be numbers definined the process ID.
 
 In summary:
 
-On remote machine `ex-machina`
+On remote machine `ex-machina`  
+1. `jupyter notebook --no-browser --port=8889`  
 
-1. `jupyter notebook --no-browser --port=8889`
-
-On local machine
-
-2. `ipytunnel ex-machina`
-
-3. Open `localhost:XXXX` in browser.
-
-4. Work
-
-5. `ipyfind ex-machina`
-
-6. `ipykill`
+On local machine  
+2. `ipytunnel ex-machina`  
+3. Open `localhost:XXXX` in browser.  
+4. Work  
+5. `ipyfind ex-machina`  
+6. `ipykill YYYY`
 
 
 ## VIM
