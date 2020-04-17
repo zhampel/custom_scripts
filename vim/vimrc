@@ -1,0 +1,88 @@
+" ~/.vimrc
+" Z. Hampel-Arias 
+" S. BenZvi
+"
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" COMMON SETTINGS
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Enable syntax highlighting
+syntax enable
+" Show line numbers
+set number
+" Always show cursor position
+set ruler
+" Autoindentation for easy coding
+set autoindent
+" Wrap position = right margin - 1
+set wrapmargin=1
+" Tab should count for 2 spaces
+set tabstop=2
+" Use 2 spaces for each autoindent
+set shiftwidth=2
+" Sub N spaces for a tab
+set expandtab
+" Use the visual bell
+set vb
+" Remember 50 last positions for 20 files
+set viminfo='20,\"50
+" Enhanced command-line completion
+set wildmenu
+" Highlight searched word
+set hlsearch
+" Menu ignores objects, backups, swap files...
+set wildignore=*.o,*.bak,*.swp
+
+if has("autocmd")
+  " When editing a file, always jump to the last cursor position
+  autocmd BufReadPost * if line("'\"") | exe "normal '\"" | endif
+
+  "In makefiles, don't expand tabs to spaces, since actual tabs are needed,
+  "and set indentation at 8 chars to be sure that all indents are tabs:
+  autocmd FileType make     set noexpandtab shiftwidth=8
+  autocmd FileType automake set noexpandtab shiftwidth=8
+  autocmd BufReadPost *.py  setlocal tabstop=4 shiftwidth=4
+endif
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ABBREVIATIONS
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Begin C comment
+ab #b /******************************************************************************
+" C++/Java comment
+ab #c ////////////////////////////////////////////////////////////////////////////////
+" End C comment
+ab #e ******************************************************************************/
+" LaTeX comment
+ab #n %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+" C++/Java divider
+ab #o // -----------------------------------------------------------------------------
+" Unix comment
+ab #u ################################################################################
+" XML/HTML comment
+ab #x <!-- ======================================================================= -->
+" Fix common typing mistakes
+ab teh the
+ab Teh The
+ab fro for
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" SYNTAX COLORS
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Search for distinguished scheme. If dne, go with default.
+" https://vi.stackexchange.com/questions/3397/how-do-i-conditionally-set-colorscheme
+
+if globpath(&runtimepath, 'colors/distinguished.vim', 1) !=# ''
+  colorscheme distinguished
+else
+  colorscheme default
+endif
+
+
+" Highlight OpenCL code like C
+syntax on
+filetype on
+au BufNewFile,BufRead *.cl set filetype=c
