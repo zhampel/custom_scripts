@@ -99,6 +99,11 @@ You should now find a directory `/Users/${USER}/ex-machina` that points to the h
 
 To unmount: `unmntme ex-machina`
 
+*Nota bene*:  
+- On the terminal, you ***must not be inside*** the mounting directory (`/Users/${USER}/ex-machina` in this case),
+as it can cause major hang ups in MacOS Finder and terminal.
+Wait till successfully mounting before navigating to the directory via the Finder.
+
 In summary:  
 1. To mount: `mymnt ex-machina`  
 2. Access files in `MNTMachines/ex-machina` directory  
