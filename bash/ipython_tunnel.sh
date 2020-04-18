@@ -4,6 +4,10 @@
 declare -A USED_PORTS
 declare -A USED_PROCS
 
+# Allow only 100 ports
+first_port=8888
+final_port=8988
+
 
 # Function to print current  associative arrays
 function array_check {
@@ -81,9 +85,9 @@ function proc_remover {
 
 # Function to assign a port
 function port_getter {
-  # Currently only 100 diff ports allowed
-  first_port=8888
-  final_port=8988
+  ## Currently only 100 diff ports allowed
+  #first_port=8888
+  #final_port=8988
 
   # Start at first_port
   test_port=${first_port}
@@ -117,17 +121,24 @@ function port_getter {
 function ipytunnel {
   # Input is IP or machine name alias (from .ssh/config)
   machine=$1
-  # Identify available port
+
+  # Optional second input is remote port
+  remote_port=${first_port}
+  [ $2 ] && remote_port=$2
+  { [ ${remote_port} -le ${final_port} ] && [ ${remote_port} -ge ${first_port} ]; } || \
+  { echo "Please select a remote port number between 8888 and 8988. Exiting..." && return 0; }
+  
+  # Select first available local port
   local_port=$(port_getter)
 
   # Ensure proper input, attempt to ssh 
   [ "${machine}" ] && \
-  ssh -N -f -L localhost:${local_port}:localhost:8889 ${machine} || \
+  ssh -N -f -L localhost:${local_port}:localhost:${remote_port} ${machine} || \
   { echo "Please provide a valid machine into which to ssh." && return; }
  
   # Get process ID of ssh service (non-trivial race condition...)
   # unix.stackexchange.com/questions/230615/predicting-the-pid-of-previously-started-ssh-command
-  pid=$(pgrep -f "localhost:${local_port}:localhost:8889 ${machine}")
+  pid=$(pgrep -f "localhost:${local_port}:localhost:${remote_port} ${machine}")
 
   # Update port & process assoc arrays
   add_port_proc ${local_port} ${pid}

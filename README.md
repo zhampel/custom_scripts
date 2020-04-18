@@ -109,25 +109,30 @@ In summary:
 If you have a remote machine running a jupyter notebook that you want to access locally,
 you have to first run some lines in both locations.
 E.g. on ex-machina, run `jupyter notebook --no-browser --port=8889`, which says
-to start a jupyter session without spinning up a browser session, and allow us to listen on port 8889.
-Then we can access that session locally by running `ipytunnel ex-machina`, requiring password as usual.
-This will spit out a port number between 8888-8988, something like this:
+to start a jupyter session without spinning up a browser session,
+and allow us to listen on ***remote*** port 8889.
+Then we can access that session locally by running `ipytunnel ex-machina 8889`, requiring password as usual.
+This will spit out a ***local*** port number between 8888-8988, something like this:
 `Connected to lambda via port id 8890 with process id 36197`.
 Open up a browser and go to `localhost:8890`.
 You should now be able to play with the jupyter notebook locally!
 To kill the session, run `ipykill 36197` or if you can't recall the process id, 
 it can be found via `ipyfind ex-machina`.
-If there are multiple sessions with `ex-machina` opened, then you can also use `ipyfind 8890`
-to find the process id via the relevant port number.
+
+*Nota bene*:  
+- If there are multiple sessions with `ex-machina` opened, then you can also use `ipyfind 8890`
+to find the process id via the relevant port number.  
+- Keep in mind that in order to have multiple notebooks running on the same ***remote*** server,
+they each need to have different ports, hence the explicit inclusion in the `ipytunnel` command.
 
 In summary:
 
 On remote machine `ex-machina`  
-1. `jupyter notebook --no-browser --port=8889`  
+1. `jupyter notebook --no-browser --port=ZZZZ`  
 
 On local machine  
-2. `ipytunnel ex-machina`  
-3. Open `localhost:XXXX` in browser.  
+2. `ipytunnel ex-machina ZZZZ`  
+3. Get ***local*** port XXXX from output of (2), open `localhost:XXXX` in browser.  
 4. Work  
 5. `ipyfind ex-machina` or `ipyfind XXXX`  
 6. `ipykill YYYY`
