@@ -109,7 +109,7 @@ In summary:
 If you have a remote machine running a jupyter notebook that you want to access locally,
 you have to first run some lines in both locations.
 E.g. on ex-machina, run `jupyter notebook --no-browser --port=8889`, which says
-to start a jupyter session without spinning up a browser session,
+to start a jupyter session without spinning up a browser,
 and allow us to listen on ***remote*** port 8889.
 Then we can access that session locally by running `ipytunnel ex-machina 8889`, requiring password as usual.
 This will spit out a ***local*** port number between 8888-8988, something like this:
@@ -119,11 +119,15 @@ You should now be able to play with the jupyter notebook locally!
 To kill the session, run `ipykill 36197` or if you can't recall the process id, 
 it can be found via `ipyfind ex-machina`.
 
-*Nota bene*:  
-- If there are multiple sessions with `ex-machina` opened, then you can also use `ipyfind 8890`
-to find the process id via the relevant port number.  
-- Keep in mind that in order to have multiple notebooks running on the same ***remote*** server,
-they each need to have different ports, hence the explicit inclusion in the `ipytunnel` command.
+*Nota bene*: 
+- Allowable port numbers (both local and remote) are limited to the range [8888, 8988].
+So only 100 remote notebooks can be opened at once....  
+- If there are multiple sessions with `ex-machina` opened, then `ipyfind ex-machina` will show them all, 
+or if you remember the local port 8890 `ipyfind 8890` will print the relevant process id.  
+- Keep in mind that to have multiple notebooks running on the same ***remote*** server,
+they each require different ports, hence the explicit inclusion in the `ipytunnel` command.
+Thus, to have two notebooks running on `ex-machina` I would do `jupyter notebook --no-browser --port=8889`
+and `jupyter notebook --no-browser --port=8890`, for example.
 
 In summary:
 
