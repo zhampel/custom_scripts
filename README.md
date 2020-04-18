@@ -111,11 +111,14 @@ you have to first run some lines in both locations.
 E.g. on ex-machina, run `jupyter notebook --no-browser --port=8889`, which says
 to start a jupyter session without spinning up a browser session, and allow us to listen on port 8889.
 Then we can access that session locally by running `ipytunnel ex-machina`, requiring password as usual.
-This will spit out a port number between 8888-8988.
-Open up a browser and go to `localhost:XXXX`, where `XXXX` is that port number.
+This will spit out a port number between 8888-8988, something like this:
+`Connected to lambda via port id 8890 with process id 36197`.
+Open up a browser and go to `localhost:8890`.
 You should now be able to play with the jupyter notebook locally!
-To kill the session, first find its specific process via `ipyfind ex-machina`, then `ipykill YYYY`,
-where `YYYY` wil be numbers definined the process ID.
+To kill the session, run `ipykill 36197` or if you can't recall the process id, 
+it can be found via `ipyfind ex-machina`.
+If there are multiple sessions with `ex-machina` opened, then you can also use `ipyfind 8890`
+to find the process id via the relevant port number.
 
 In summary:
 
@@ -126,7 +129,7 @@ On local machine
 2. `ipytunnel ex-machina`  
 3. Open `localhost:XXXX` in browser.  
 4. Work  
-5. `ipyfind ex-machina`  
+5. `ipyfind ex-machina` or `ipyfind XXXX`  
 6. `ipykill YYYY`
 
 
