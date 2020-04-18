@@ -22,6 +22,13 @@ function array_check {
 }
 
 
+# Function to completely clear arrays
+function purge_arrays {
+  for key in ${!USED_PORTS[@]}; do unset USED_PORTS["${key}"]; done
+  for key in ${!USED_PROCS[@]}; do unset USED_PROCS["${key}"]; done
+}
+
+
 # Add port and process id to arrays
 function add_port_proc {
   local_port=$1
@@ -175,7 +182,7 @@ function ipyfind {
   echo -e "Process info:" && \
   echo "${process_info}" | sed -e 's/"${user_delimiter}"/  /g'; } || \
 
-  echo "No relevant processes found."
+  { echo "No relevant processes found." && purge_arrays; }
 }
 
 
@@ -194,10 +201,10 @@ function ipykill {
 
   # If more than one, print info for guidance
   [ ${num_procs} -gt 1 ] && ipyfind ${search_key} && \
-  echo "More than 1 processes associated with ${search_key}." && \
-  echo "Please enter from Process id(s) list above or ctrl-c to cancel." && \
-  echo -e "Enter process id: \c" && read process_id
-
+  echo "" && \
+  echo "Multiple processes associated with ${search_key}." && \
+  echo "Please enter from Process ids listed above or ctrl-c to cancel." && \
+  read -p 'Enter process id: ' process_id
   # If process id not provided or not found running, then nothing to do.
   [ ! "${process_id}" ] || [ ! `ps aux | awk '{print $2 }' | grep ${process_id}` ] && \
   echo "No running process with id ${process_id} to kill." && return 0;
