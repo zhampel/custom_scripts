@@ -92,9 +92,6 @@ function proc_remover {
 
 # Function to assign a port
 function port_getter {
-  ## Currently only 100 diff ports allowed
-  #first_port=8888
-  #final_port=8988
 
   # Start at first_port
   test_port=${first_port}
@@ -105,7 +102,6 @@ function port_getter {
   # Check if dict has any elements
   n_vals=${#USED_PORTS[@]}
   [ "$n_vals" -eq 0 ] && cond=false
-  #|| cond=true
 
   while $cond
   do
@@ -115,7 +111,6 @@ function port_getter {
     # If yes and value less than final port limit, then increment, else exit
     cond=false
     [ ! -z ${test_key} ] && [ "${final_port}" -gt "${test_port}" ] && test_port=$(( ${test_port}+1 )) && cond=true
-    #|| cond=false
   done
 
   # Return final test port number
@@ -149,8 +144,6 @@ function ipytunnel {
 
   # Update port & process assoc arrays
   add_port_proc ${local_port} ${pid}
-  #USED_PORTS["${local_port}"]="${pid}"
-  #USED_PROCS["${pid}"]="${local_port}"
   echo ""
   echo "Connected to ${machine} via port id ${local_port} with process id ${pid}."
 }
