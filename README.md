@@ -74,7 +74,7 @@ Host ex-machina
     HostName 10.33.0.97
     ForwardAgent yes
     ForwardX11 yes
-    IdentityFile /Users/aiava/.ssh/id_rsa_pub
+    IdentityFile /Users/aiava/.ssh/id_rsa
     User ava
 ```
 
@@ -82,7 +82,7 @@ The first line `Host` defines a simple name, an alias, for the computer with
 IP address identified by the `HostName` keyword below.
 The following two lines assist in running graphics applications remotely,
 and are not necessary for remote cmd line work.
-The `IdentityFile` keyword points to the local SSH public key used for secure access.
+The `IdentityFile` keyword points to the local SSH identification file (i.e. the one without the .pub extension) used for secure access.
 This file can be generated locally via `ssh-keygen` or provided via some other service.
 Finally, the `User` parameter is the username that you'll use on the remote machine, i.e. `ex-machina`.
 
